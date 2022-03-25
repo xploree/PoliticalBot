@@ -1,6 +1,6 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
-const uri = "mongodb+srv://Xplore:051407ng@politicalbot.mtvap.mongodb.net/Default?    retryWrites=true&w=majority";
+const uri = "";
 var mongoClient;
 
 function MongoClientConnect(){
