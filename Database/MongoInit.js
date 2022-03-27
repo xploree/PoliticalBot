@@ -1,13 +1,14 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://Xplore:051407NG@politicalbot.mtvap.mongodb.net/Default?retryWrites=true&w=majority";
+const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+client.connect(err => {
+  const collection = client.db("companies").collection("stocks");
+  
+  // perform actions on the collection object
+  client.close();
+});
 
-const uri = "";
-var mongoClient;
+function StartMongoClient(){
 
-function MongoClientConnect(){
-  mongoClient = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-  console.log("\x1b[35m%s\x1b[0m","MongoClient Connected");
-}
-
-function GetMongoClient(){
-  return mongoClient;
+});
 }
