@@ -1,11 +1,11 @@
 const fs = require('fs');
 eval(fs.readFileSync('./Systems/Time/Event.js')+'');
-eval(fs.readFileSync('./Database/MongoInit.js')+'');
+//eval(fs.readFileSync('./Database/MongoInit.js')+'');
 var cron = require('node-cron');
 const { Client, Collection, Intents, MessageEmbed } = require('discord.js');
 const { token } = require('./config.json');
 const wait = require('util').promisify(setTimeout);
-const client = new Client({ intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+const discordClient = new Client({ intents:[Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 
 // channelID's
 const bug_testing_id = '941691022751182908';
@@ -13,12 +13,12 @@ const voting_id = '941470999508033636';
 
 // send message in channel
 function sendTimedMessageInChannel(channelID, message, time){
-  client.channels.cache.get(channelID).send(message).then(msg => setTimeout(() => msg.delete(), time));
+  discordClient.channels.cache.get(channelID).send(message).then(msg => setTimeout(() => msg.delete(), time));
 }
 
 // send embed in channel
 function sendEmbedInChannel(channelID, embed){
-  client.channels.cache.get(channelID).send({embeds: [embed]});
+  discordClient.channels.cache.get(channelID).send({embeds: [embed]});
 }
 
 // EventListener for Timed events
@@ -67,28 +67,27 @@ const success_election_embed = new MessageEmbed()
   .setTitle("Success!")
   .setDescription("Election Stage Started.");
 
-client.commands = new Collection();
+discordClient.commands = new Collection();
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
 	const command = require(`./commands/${file}`);
-	client.commands.set(command.data.name, command);
+	discordClient.commands.set(command.data.name, command);
 }
 
-client.once('ready', () => {
-	console.log('PoliticalBot Loaded.');
-  client.user.setPresence({ game: { name: 'Politics', type: "watching"}}); 
+discordClient.once('ready', () => {
+	console.log("\x1b[31m%s\x1b[0m", 'PoliticalBot Loaded.');
+  discordClient.user.setPresence({ game: { name: 'Politics', type: "watching"}}); 
   // starts event listener
   InitializeTimeData();
   // Connect MongoClient
-  MongoClientConnect();
-  console.log(GetMongoClient())
+  //MongoClientConnect();
 });
 
-client.on('interactionCreate', async interaction => {
+discordClient.on('interactionCreate', async interaction => {
 	if (!interaction.isCommand()) return;
 
-	const command = client.commands.get(interaction.commandName);
+	const command = discordClient.commands.get(interaction.commandName);
 
 	if (!command) return;
 
@@ -100,12 +99,12 @@ client.on('interactionCreate', async interaction => {
 	}
 });
 
-client.on('guildMemberAdd', (guildMember) => {
+discordClient.on('guildMemberAdd', (guildMember) => {
    guildMember.addRole(guildMember.guild.roles.find(role => role.name === "Unregistered Citizen"));
 });
 
 // select menu handler
-client.on('interactionCreate', async interaction => {
+discordClient.on('interactionCreate', async interaction => {
 if(interaction.isSelectMenu()){
   let choice = interaction.values[0] 
     const member = interaction.member
@@ -139,5 +138,4 @@ if(interaction.isButton){
   }
 }})
 
-
-client.login(token);
+let success = discordClient.login(token)
